@@ -1,128 +1,82 @@
-import { useState } from "react";
-import Form from "@rjsf/antd";
-import validator from "@rjsf/validator-ajv8";
+import { AppShell, Button, Flex, Stack, Table, Title } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import allTasksData from "@/data/tasks.json";
+import { useRouter } from "next/router";
 
-import { convertJsonSchema, convertUiSchema } from "@/utils/adaptor";
+export default function FormIndexPage() {
+  const router = useRouter();
+  const [opened] = useDisclosure();
 
-import taskDatas from "@/data/tasks.json";
-import { Button, Select } from "@mantine/core";
-import { useMemo } from "react";
-import { dataMap } from "@/utils/constant";
-import axios, { HttpStatusCode } from "axios";
-
-export default function FormPage() {
-  const [selectedTask, setSelectedTask] = useState<any>(null);
-  const [allFormData, setAllFormData] = useState(false);
-  const [isConvertForm, setIsConvertForm] = useState(false);
-  const [schema, setSchema] = useState({});
-  const [uiSchema, setUiSchema] = useState({});
-
-  /**
-   * fetch data from flowable task by users
-   */
-  function getData() {
-    const username = "santo";
-    const url =
-      process.env.NEXT_PUBLIC_FLOWABLE_API_HOSTNAME! +
-      "/flowable-rest/service/runtime/tasks?assignee=" +
-      username;
-
-    axios
-      .get(url, {
-        auth: {
-          username: process.env.NEXT_PUBLIC_FLOWABLE_API_USERNAME!,
-          password: process.env.NEXT_PUBLIC_FLOWABLE_API_PASSWORD!,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        if (res.status == HttpStatusCode.Ok) {
-          console.log("ok");
-        }
-      });
-    setAllFormData(!allFormData);
-  }
-
-  function convertDataSchema() {
-    setIsConvertForm(true);
-    // console.log(dataMap[selectedTask.value]);
-    if (!dataMap[selectedTask.value].hasOwnProperty("error")) {
-      setSchema(convertJsonSchema(dataMap[selectedTask.value]));
-      setUiSchema(convertUiSchema(dataMap[selectedTask.value]));
-    }
-  }
-
-  function changeTask(option: any) {
-    setIsConvertForm(false);
-    setSelectedTask(option);
-  }
-
-  const log = (type: any) => console.log.bind(console, type);
-
-  // console.log(allFormData);
-
-  const datas = useMemo(
-    () =>
-      taskDatas.data.map((item) => ({
-        value: item.id,
-        label: `${item.name} -- ${item.id}`,
-        key: item.id,
-      })),
-    [taskDatas]
-  );
+  const rows = allTasksData.data.map((item) => (
+    <Table.Tr key={item.id}>
+      <Table.Td>{item.id}</Table.Td>
+      <Table.Td>{item.name}</Table.Td>
+      <Table.Td>{item.description ?? "-"}</Table.Td>
+      <Table.Td>{item.owner ?? "-"}</Table.Td>
+      <Table.Td>{item.createTime}</Table.Td>
+      <Table.Td>{item.priority}</Table.Td>
+      <Table.Td>{item.dueDate ?? "-"}</Table.Td>
+      <Table.Td>
+        <Button onClick={() => router.push(`/form/${item.id}`)}>
+          View Task
+        </Button>
+      </Table.Td>
+    </Table.Tr>
+  ));
 
   return (
-    <div className="p-8 grid grid-cols-2 gap-8">
-      <div>
-        <div className="mb-8">
-          <span>Get All Tasks</span>
-          <Button className="ml-4" onClick={() => getData()}>
-            Click here
-          </Button>
-        </div>
-        <div className="mb-8 border border-black p-4">
-          {!allFormData ? (
-            <span>no Data...</span>
-          ) : (
-            <>
-              <p className="mb-4 text-2xl">Select form by task-id</p>
-              <Select
-                data={datas}
-                onChange={(_value, option) => changeTask(option)}
-              />
-            </>
-          )}
-        </div>
-        <p className="mb-4">
-          Get selected form model and Convert Form{" "}
-          <Button className="ml-4" onClick={() => convertDataSchema()}>
-            Click here
-          </Button>
-        </p>
-      </div>
-      <div>
-        <p className="mb-4">RJSF FORMS</p>
-        {isConvertForm && (
-          <div className="border border-slate-500 p-4">
-            {selectedTask &&
-            dataMap[selectedTask.value].hasOwnProperty("error") ? (
-              <>
-                <p>{dataMap[selectedTask.value].error.message}</p>
-                <p>{dataMap[selectedTask.value].error.exception}</p>
-              </>
-            ) : (
-              <Form
-                schema={schema}
-                validator={validator}
-                uiSchema={uiSchema}
-                onChange={log("changed")}
-                onSubmit={log("submitted")}
-                onError={log("errors")}
-              />
-            )}
-          </div>
-        )}
-      </div>
-    </div>
+    <AppShell
+      navbar={{
+        width: 300,
+        breakpoint: "sm",
+        collapsed: { mobile: !opened },
+      }}
+      padding="md"
+    >
+      <AppShell.Navbar p="md">
+        <Stack
+          h={300}
+          bg="var(--mantine-color-body)"
+          align="stretch"
+          justify="center"
+          gap="md"
+        >
+          <Button variant="default">Task</Button>
+          <Button variant="default">History</Button>
+        </Stack>
+      </AppShell.Navbar>
+
+      <AppShell.Main>
+        <Flex
+          mih={50}
+          gap="md"
+          justify="flex-end"
+          align="flex-start"
+          direction="row"
+          wrap="wrap"
+          mb={32}
+        >
+          <Title order={3}>
+            Task Active (Update Time: 2024-06-18 09:00:00)
+          </Title>
+        </Flex>
+
+        <Table withTableBorder>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>ID</Table.Th>
+              <Table.Th>Name</Table.Th>
+              <Table.Th>Description</Table.Th>
+              <Table.Th>Owner</Table.Th>
+              <Table.Th>Created Time</Table.Th>
+              <Table.Th>Priority</Table.Th>
+              <Table.Th>Due Date</Table.Th>
+              <Table.Th></Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>{rows}</Table.Tbody>
+        </Table>
+      </AppShell.Main>
+    </AppShell>
   );
 }
