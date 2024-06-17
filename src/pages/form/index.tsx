@@ -1,4 +1,13 @@
-import { AppShell, Button, Flex, Stack, Table, Title } from "@mantine/core";
+import {
+  AppShell,
+  Button,
+  Flex,
+  Grid,
+  Stack,
+  Table,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import allTasksData from "@/data/tasks.json";
 import { useRouter } from "next/router";
@@ -34,27 +43,26 @@ export default function FormIndexPage() {
       padding="md"
     >
       <AppShell.Navbar p="md">
-        <Stack
-          h={300}
-          bg="var(--mantine-color-body)"
-          align="stretch"
-          justify="center"
-          gap="md"
-        >
-          <Button variant="default">Task</Button>
-          <Button variant="default">History</Button>
+        <Stack mih="100%" justify="space-between">
+          <Stack align="stretch" justify="center" gap="md">
+            <Text mt="xl" mb="4rem">
+              Admin
+            </Text>
+            <Button>Task</Button>
+            <Button variant="default">History</Button>
+          </Stack>
+          <Button fullWidth>Sign out</Button>
         </Stack>
       </AppShell.Navbar>
 
       <AppShell.Main>
         <Flex
-          mih={50}
           gap="md"
           justify="flex-end"
           align="flex-start"
           direction="row"
           wrap="wrap"
-          mb={32}
+          my={32}
         >
           <Title order={3}>
             Task Active (Update Time: 2024-06-18 09:00:00)
