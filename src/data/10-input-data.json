@@ -1,0 +1,35 @@
+{
+  "id": "83b79c70-230d-11ef-9606-024268d89169",
+  "name": "Form Input Data Bayu 1",
+  "description": null,
+  "key": "form-input-data-bayu-1",
+  "version": 1,
+  "fields": [
+    {
+      "fieldType": "FormField",
+      "id": "name",
+      "name": "name",
+      "type": "text",
+      "value": null,
+      "required": false,
+      "readOnly": false,
+      "overrideId": false,
+      "placeholder": null,
+      "layout": null
+    },
+    {
+      "fieldType": "FormField",
+      "id": "income",
+      "name": "income",
+      "type": "integer",
+      "value": null,
+      "required": false,
+      "readOnly": false,
+      "overrideId": false,
+      "placeholder": null,
+      "layout": null
+    }
+  ],
+  "outcomes": [],
+  "outcomeVariableName": null
+}

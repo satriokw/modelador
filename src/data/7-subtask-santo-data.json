@@ -1,0 +1,6 @@
+{
+  "error": {
+    "message": "Bad request",
+    "exception": "Task has no form defined"
+  }
+}

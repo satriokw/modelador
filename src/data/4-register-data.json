@@ -1,0 +1,35 @@
+{
+  "id": "2d9374c3-1cc8-11ef-9606-024268d89169",
+  "name": "User Registration",
+  "description": null,
+  "key": "user-registration",
+  "version": 9,
+  "fields": [
+    {
+      "fieldType": "FormField",
+      "id": "email",
+      "name": "Email",
+      "type": "text",
+      "value": null,
+      "required": false,
+      "readOnly": false,
+      "overrideId": false,
+      "placeholder": "Input your email",
+      "layout": null
+    },
+    {
+      "fieldType": "FormField",
+      "id": "fullname",
+      "name": "FullName",
+      "type": "text",
+      "value": null,
+      "required": false,
+      "readOnly": false,
+      "overrideId": false,
+      "placeholder": null,
+      "layout": null
+    }
+  ],
+  "outcomes": [],
+  "outcomeVariableName": null
+}

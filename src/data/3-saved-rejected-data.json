@@ -1,0 +1,24 @@
+{
+  "id": "8fdc7f13-1d86-11ef-9606-024268d89169",
+  "name": "test rejected notice form",
+  "description": null,
+  "key": "test-rejected-notice-form",
+  "version": 1,
+  "fields": [
+    {
+      "fieldType": "ExpressionFormField",
+      "id": "label",
+      "name": "Label",
+      "type": "expression",
+      "value": "Rejected user from region : Jakarta",
+      "required": false,
+      "readOnly": false,
+      "overrideId": false,
+      "placeholder": null,
+      "layout": null,
+      "expression": "Rejected user from region : ${region}"
+    }
+  ],
+  "outcomes": [],
+  "outcomeVariableName": null
+}
