@@ -2,8 +2,10 @@ import { Container, PasswordInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Button, Group, TextInput } from "@mantine/core";
 import axios, { HttpStatusCode } from "axios";
+import { useRouter } from "next/router";
 
 export default function LoginPage() {
+  const router = useRouter();
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -35,10 +37,9 @@ export default function LoginPage() {
       .then((res) => {
         console.log(res);
         if (res.status == HttpStatusCode.Ok) {
-          // navigate to /form
+          router.push("/form");
         }
       });
-    // navigate({ to: "/form" });
   }
   return (
     <div className="mt-12 p-2">

@@ -23,7 +23,9 @@ export default function FormPage() {
   function getData() {
     const username = "santo";
     const url =
-      "/api" + "flowable-rest/service/runtime/tasks?assignee=" + username;
+      process.env.NEXT_PUBLIC_FLOWABLE_API_HOSTNAME! +
+      "/flowable-rest/service/runtime/tasks?assignee=" +
+      username;
 
     axios
       .get(url, {
