@@ -20,29 +20,29 @@ export default function LoginPage() {
   });
 
   function login(values: any) {
-    // router.push("/form");
-    const url =
-      process.env.NEXT_PUBLIC_FLOWABLE_API_HOSTNAME! +
-      "/" +
-      process.env.NEXT_PUBLIC_FLOWABLE_API_CONTEXT_PATH +
-      "/idm-api/users/" +
-      values.email;
-    console.log(url);
-    console.log(values);
+    router.push("/form");
+    // const url =
+    //   process.env.NEXT_PUBLIC_FLOWABLE_API_HOSTNAME! +
+    //   "/" +
+    //   process.env.NEXT_PUBLIC_FLOWABLE_API_CONTEXT_PATH +
+    //   "/idm-api/users/" +
+    //   values.email;
+    // console.log(url);
+    // console.log(values);
 
-    axios
-      .get(url, {
-        auth: {
-          username: process.env.NEXT_PUBLIC_FLOWABLE_API_USERNAME!,
-          password: process.env.NEXT_PUBLIC_FLOWABLE_API_PASSWORD!,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        if (res.status == HttpStatusCode.Ok) {
-          router.push("/form");
-        }
-      });
+    // axios
+    //   .get(url, {
+    //     auth: {
+    //       username: process.env.NEXT_PUBLIC_FLOWABLE_API_USERNAME!,
+    //       password: process.env.NEXT_PUBLIC_FLOWABLE_API_PASSWORD!,
+    //     },
+    //   })
+    //   .then((res) => {
+    //     console.log(res);
+    //     if (res.status == HttpStatusCode.Ok) {
+    //       router.push("/form");
+    //     }
+    //   });
   }
   return (
     <Center h="100vh">

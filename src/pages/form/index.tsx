@@ -11,6 +11,8 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import allTasksData from "@/data/tasks.json";
 import { useRouter } from "next/router";
+import axios, { HttpStatusCode } from "axios";
+import { useEffect } from "react";
 
 export default function FormIndexPage() {
   const router = useRouter();
@@ -32,6 +34,34 @@ export default function FormIndexPage() {
       </Table.Td>
     </Table.Tr>
   ));
+
+  function getData() {
+    const username = "santo";
+    const url =
+      process.env.NEXT_PUBLIC_FLOWABLE_API_HOSTNAME! +
+      "/" +
+      "flowable-rest/service/runtime/tasks?assignee=" +
+      username;
+
+    axios
+      .get(url, {
+        auth: {
+          username: process.env.NEXT_PUBLIC_FLOWABLE_API_USERNAME!,
+          password: process.env.NEXT_PUBLIC_FLOWABLE_API_PASSWORD!,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        if (res.status == HttpStatusCode.Ok) {
+          console.log("ok");
+        }
+      });
+    // setAllFormData(!allFormData);
+  }
+
+  // useEffect(() => {
+  //   getData();
+  // }, []);
 
   return (
     <AppShell

@@ -12,14 +12,12 @@ export default function FormDetailPage() {
   const router = useRouter();
   const log = (type: any) => console.log.bind(console, type);
 
-  const schema = useMemo(
-    () => convertJsonSchema(dataMap[router.query.id as string]),
-    [router.query.id]
-  );
-  const uiSchema = useMemo(
-    () => convertUiSchema(dataMap[router.query.id as string]),
-    [router.query.id]
-  );
+  const schema = useMemo(() => {
+    return convertJsonSchema(dataMap[router.query.id as string]);
+  }, [router.query.id, dataMap]);
+  const uiSchema = useMemo(() => {
+    return convertUiSchema(dataMap[router.query.id as string]);
+  }, [router.query.id]);
 
   return (
     <AppShell
@@ -49,14 +47,18 @@ export default function FormDetailPage() {
             mb="xl"
             onClick={() => router.push(`/form`)}
           >{`<- Back`}</Button>
-          <Form
-            schema={schema}
-            validator={validator}
-            uiSchema={uiSchema}
-            onChange={log("changed")}
-            onSubmit={log("submitted")}
-            onError={log("errors")}
-          />
+          {schema.length === 0 ? (
+            <div>schema is empty</div>
+          ) : (
+            <Form
+              schema={schema}
+              validator={validator}
+              uiSchema={uiSchema}
+              onChange={log("changed")}
+              onSubmit={log("submitted")}
+              onError={log("errors")}
+            />
+          )}
         </Container>
       </AppShell.Main>
     </AppShell>

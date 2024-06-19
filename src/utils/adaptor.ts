@@ -14,6 +14,10 @@ const typeMap: any = {
 
 // function JSONSchema convert
 export function convertJsonSchema(data: any) {
+  if (data.hasOwnProperty("error")) {
+    return [];
+  }
+
   // function JSONSchema convert
   const transformedData: any = {
     title: data.name,
@@ -94,6 +98,10 @@ export function convertJsonSchema(data: any) {
 
 // function UISchema convert
 export function convertUiSchema(data: any) {
+  if (data.hasOwnProperty("error")) {
+    return [];
+  }
+
   const uiSchema: any = {};
   data.fields.forEach((field: any) => {
     const { id } = field;
