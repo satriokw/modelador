@@ -3,56 +3,53 @@ import { useDisclosure } from "@mantine/hooks";
 import Form from "@rjsf/antd";
 import validator from "@rjsf/validator-ajv8";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
-import { dataMap } from "@/utils/constant";
+import { useMemo } from "react";
 import { convertJsonSchema, convertUiSchema } from "@/utils/adaptor";
 import Link from "next/link";
-import axios, { HttpStatusCode } from "axios";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 export default function FormDetailPage() {
   const router = useRouter();
   const [opened] = useDisclosure();
-  const [formData, setFormData] = useState(null);
 
   const log = (type: any) => console.log.bind(console, type);
 
-  function getData() {
-    const url =
-      "/api" +
-      "/flowable-rest/service/runtime/tasks/" +
-      router.query.id +
-      "/form";
+  const url =
+    "/api" +
+    "/flowable-rest/service/runtime/tasks/" +
+    router.query.id +
+    "/form";
 
-    axios
-      .get(url, {
+  const {
+    data: form,
+    isFetching,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["form", router.query.id],
+    queryFn: async () => {
+      const res = await axios.get(url, {
         auth: {
           username: "rest-admin",
           password: "test",
         },
-      })
-      .then((res) => {
-        if (res.status == HttpStatusCode.Ok) {
-          console.log("ok");
-          setFormData(res.data);
-        }
       });
-    // setAllFormData(!allFormData);
-  }
-
-  useEffect(() => {
-    getData();
-  }, [router.query.id]);
+      return res.data;
+    },
+    enabled: router.query.id !== undefined,
+  });
 
   const schema = useMemo(() => {
-    if (router.query.id !== undefined && formData !== null) {
-      return convertJsonSchema(formData);
+    if (router.query.id !== undefined && form !== undefined) {
+      return convertJsonSchema(form);
     } else return [];
-  }, [formData, router.query.id]);
+  }, [form, router.query.id]);
   const uiSchema = useMemo(() => {
-    if (router.query.id !== undefined && formData !== null) {
-      return convertUiSchema(formData);
+    if (router.query.id !== undefined && form !== undefined) {
+      return convertUiSchema(form);
     } else return [];
-  }, [formData, router.query.id]);
+  }, [form, router.query.id]);
 
   return (
     <AppShell
@@ -81,9 +78,9 @@ export default function FormDetailPage() {
           <Link href="/form">
             <Button mb="xl">{`<- Back`}</Button>
           </Link>
-          {schema.length === 0 ? (
-            <div>schema is empty</div>
-          ) : (
+          {isError && <Text>{error.message}</Text>}
+          {isFetching && <Text>Loading ...</Text>}
+          {form && (
             <Form
               schema={schema}
               validator={validator}

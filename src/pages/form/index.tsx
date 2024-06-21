@@ -8,58 +8,35 @@ import {
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import allTasksData from "@/data/tasks.json";
 import { useRouter } from "next/router";
-import axios, { HttpStatusCode } from "axios";
-import { useEffect, useState } from "react";
+import axios from "axios";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 
 export default function FormIndexPage() {
   const router = useRouter();
   const [opened] = useDisclosure();
-  const [allTaskData, setAllTaskData] = useState(null);
 
-  const rows = allTasksData.data.map((item) => (
-    <Table.Tr key={item.id}>
-      <Table.Td>{item.id}</Table.Td>
-      <Table.Td>{item.name}</Table.Td>
-      <Table.Td>{item.description ?? "-"}</Table.Td>
-      <Table.Td>{item.owner ?? "-"}</Table.Td>
-      <Table.Td>{item.createTime}</Table.Td>
-      <Table.Td>{item.priority}</Table.Td>
-      <Table.Td>{item.dueDate ?? "-"}</Table.Td>
-      <Table.Td>
-        <Button onClick={() => router.push(`/form/${item.id}`)}>
-          View Task
-        </Button>
-      </Table.Td>
-    </Table.Tr>
-  ));
+  const username = "santo";
+  const url =
+    "/api" + "/flowable-rest/service/runtime/tasks?assignee=" + username;
 
-  function getData() {
-    const username = "santo";
-    const url =
-      "/api" + "/flowable-rest/service/runtime/tasks?assignee=" + username;
-
-    axios
-      .get(url, {
+  const {
+    data: allTasks,
+    isFetching,
+    isError,
+  } = useQuery({
+    queryKey: ["task"],
+    queryFn: async () => {
+      const res = await axios.get(url, {
         auth: {
           username: "rest-admin",
           password: "test",
         },
-      })
-      .then((res) => {
-        if (res.status == HttpStatusCode.Ok) {
-          console.log("ok");
-          setAllTaskData(res.data);
-        }
       });
-    // setAllFormData(!allFormData);
-  }
-
-  useEffect(() => {
-    getData();
-  }, []);
+      return res.data;
+    },
+  });
 
   return (
     <AppShell
@@ -97,6 +74,8 @@ export default function FormIndexPage() {
           </Title>
         </Flex>
 
+        {isFetching && <Text>Loading ...</Text>}
+        {isError && <Text>Data not found</Text>}
         <Table withTableBorder>
           <Table.Thead>
             <Table.Tr>
@@ -111,26 +90,22 @@ export default function FormIndexPage() {
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {allTaskData !== null ? (
-              allTaskData.data.map((item: any) => (
-                <Table.Tr key={item.id}>
-                  <Table.Td>{item.id}</Table.Td>
-                  <Table.Td>{item.name}</Table.Td>
-                  <Table.Td>{item.description ?? "-"}</Table.Td>
-                  <Table.Td>{item.owner ?? "-"}</Table.Td>
-                  <Table.Td>{item.createTime}</Table.Td>
-                  <Table.Td>{item.priority}</Table.Td>
-                  <Table.Td>{item.dueDate ?? "-"}</Table.Td>
-                  <Table.Td>
-                    <Link href={"form/" + item.id}>
-                      <Button>View Task</Button>
-                    </Link>
-                  </Table.Td>
-                </Table.Tr>
-              ))
-            ) : (
-              <Text>Data not found</Text>
-            )}
+            {allTasks?.data.map((item: any) => (
+              <Table.Tr key={item.id}>
+                <Table.Td>{item.id}</Table.Td>
+                <Table.Td>{item.name}</Table.Td>
+                <Table.Td>{item.description ?? "-"}</Table.Td>
+                <Table.Td>{item.owner ?? "-"}</Table.Td>
+                <Table.Td>{item.createTime}</Table.Td>
+                <Table.Td>{item.priority}</Table.Td>
+                <Table.Td>{item.dueDate ?? "-"}</Table.Td>
+                <Table.Td>
+                  <Link href={"form/" + item.id}>
+                    <Button>View Task</Button>
+                  </Link>
+                </Table.Td>
+              </Table.Tr>
+            ))}
           </Table.Tbody>
         </Table>
       </AppShell.Main>
