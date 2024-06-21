@@ -3,21 +3,56 @@ import { useDisclosure } from "@mantine/hooks";
 import Form from "@rjsf/antd";
 import validator from "@rjsf/validator-ajv8";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { dataMap } from "@/utils/constant";
 import { convertJsonSchema, convertUiSchema } from "@/utils/adaptor";
+import Link from "next/link";
+import axios, { HttpStatusCode } from "axios";
 
 export default function FormDetailPage() {
-  const [opened] = useDisclosure();
   const router = useRouter();
+  const [opened] = useDisclosure();
+  const [formData, setFormData] = useState(null);
+
   const log = (type: any) => console.log.bind(console, type);
 
-  const schema = useMemo(() => {
-    return convertJsonSchema(dataMap[router.query.id as string]);
-  }, [router.query.id, dataMap]);
-  const uiSchema = useMemo(() => {
-    return convertUiSchema(dataMap[router.query.id as string]);
+  function getData() {
+    const url =
+      "/api" +
+      "/flowable-rest/service/runtime/tasks/" +
+      router.query.id +
+      "/form";
+
+    axios
+      .get(url, {
+        auth: {
+          username: "rest-admin",
+          password: "test",
+        },
+      })
+      .then((res) => {
+        if (res.status == HttpStatusCode.Ok) {
+          console.log("ok");
+          setFormData(res.data);
+        }
+      });
+    // setAllFormData(!allFormData);
+  }
+
+  useEffect(() => {
+    getData();
   }, [router.query.id]);
+
+  const schema = useMemo(() => {
+    if (router.query.id !== undefined && formData !== null) {
+      return convertJsonSchema(formData);
+    } else return [];
+  }, [formData, router.query.id]);
+  const uiSchema = useMemo(() => {
+    if (router.query.id !== undefined && formData !== null) {
+      return convertUiSchema(formData);
+    } else return [];
+  }, [formData, router.query.id]);
 
   return (
     <AppShell
@@ -43,10 +78,9 @@ export default function FormDetailPage() {
 
       <AppShell.Main>
         <Container fluid>
-          <Button
-            mb="xl"
-            onClick={() => router.push(`/form`)}
-          >{`<- Back`}</Button>
+          <Link href="/form">
+            <Button mb="xl">{`<- Back`}</Button>
+          </Link>
           {schema.length === 0 ? (
             <div>schema is empty</div>
           ) : (

@@ -2,7 +2,6 @@ import {
   AppShell,
   Button,
   Flex,
-  Grid,
   Stack,
   Table,
   Text,
@@ -12,11 +11,13 @@ import { useDisclosure } from "@mantine/hooks";
 import allTasksData from "@/data/tasks.json";
 import { useRouter } from "next/router";
 import axios, { HttpStatusCode } from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function FormIndexPage() {
   const router = useRouter();
   const [opened] = useDisclosure();
+  const [allTaskData, setAllTaskData] = useState(null);
 
   const rows = allTasksData.data.map((item) => (
     <Table.Tr key={item.id}>
@@ -38,30 +39,27 @@ export default function FormIndexPage() {
   function getData() {
     const username = "santo";
     const url =
-      process.env.NEXT_PUBLIC_FLOWABLE_API_HOSTNAME! +
-      "/" +
-      "flowable-rest/service/runtime/tasks?assignee=" +
-      username;
+      "/api" + "/flowable-rest/service/runtime/tasks?assignee=" + username;
 
     axios
       .get(url, {
         auth: {
-          username: process.env.NEXT_PUBLIC_FLOWABLE_API_USERNAME!,
-          password: process.env.NEXT_PUBLIC_FLOWABLE_API_PASSWORD!,
+          username: "rest-admin",
+          password: "test",
         },
       })
       .then((res) => {
-        console.log(res);
         if (res.status == HttpStatusCode.Ok) {
           console.log("ok");
+          setAllTaskData(res.data);
         }
       });
     // setAllFormData(!allFormData);
   }
 
-  // useEffect(() => {
-  //   getData();
-  // }, []);
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <AppShell
@@ -112,7 +110,28 @@ export default function FormIndexPage() {
               <Table.Th></Table.Th>
             </Table.Tr>
           </Table.Thead>
-          <Table.Tbody>{rows}</Table.Tbody>
+          <Table.Tbody>
+            {allTaskData !== null ? (
+              allTaskData.data.map((item: any) => (
+                <Table.Tr key={item.id}>
+                  <Table.Td>{item.id}</Table.Td>
+                  <Table.Td>{item.name}</Table.Td>
+                  <Table.Td>{item.description ?? "-"}</Table.Td>
+                  <Table.Td>{item.owner ?? "-"}</Table.Td>
+                  <Table.Td>{item.createTime}</Table.Td>
+                  <Table.Td>{item.priority}</Table.Td>
+                  <Table.Td>{item.dueDate ?? "-"}</Table.Td>
+                  <Table.Td>
+                    <Link href={"form/" + item.id}>
+                      <Button>View Task</Button>
+                    </Link>
+                  </Table.Td>
+                </Table.Tr>
+              ))
+            ) : (
+              <Text>Data not found</Text>
+            )}
+          </Table.Tbody>
         </Table>
       </AppShell.Main>
     </AppShell>
