@@ -8,13 +8,11 @@ import {
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useRouter } from "next/router";
 import axios from "axios";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 
 export default function FormIndexPage() {
-  const router = useRouter();
   const [opened] = useDisclosure();
 
   const username = "santo";

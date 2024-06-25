@@ -38,6 +38,7 @@ export default function FormDetailPage() {
       return res.data;
     },
     enabled: router.query.id !== undefined,
+    retry: false,
   });
 
   const schema = useMemo(() => {
