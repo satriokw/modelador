@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
-  reactStrictMode: true,
+module.exports = {};
+
+const nextConfig = {
+  reactStrictMode: false,
   async redirects() {
     return [
       // Basic redirect
@@ -19,4 +21,8 @@ module.exports = {
       },
     ];
   },
+  swcMinify: true,
+  output: "standalone",
 };
+
+module.exports = nextConfig;
