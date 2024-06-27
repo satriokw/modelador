@@ -1,7 +1,10 @@
 import {
   AppShell,
   Button,
+  Center,
   Flex,
+  Loader,
+  LoadingOverlay,
   Stack,
   Table,
   Text,
@@ -19,6 +22,7 @@ export default function FormIndexPage() {
   const url =
     "/api" + "/flowable-rest/service/runtime/tasks?assignee=" + username;
 
+  const load = true;
   const {
     data: allTasks,
     isFetching,
@@ -72,40 +76,45 @@ export default function FormIndexPage() {
           </Title>
         </Flex>
 
-        {isFetching && <Text>Loading ...</Text>}
-        {isError && <Text>Data not found</Text>}
-        <Table withTableBorder>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>ID</Table.Th>
-              <Table.Th>Name</Table.Th>
-              <Table.Th>Description</Table.Th>
-              <Table.Th>Owner</Table.Th>
-              <Table.Th>Created Time</Table.Th>
-              <Table.Th>Priority</Table.Th>
-              <Table.Th>Due Date</Table.Th>
-              <Table.Th></Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {allTasks?.data.map((item: any) => (
-              <Table.Tr key={item.id}>
-                <Table.Td>{item.id}</Table.Td>
-                <Table.Td>{item.name}</Table.Td>
-                <Table.Td>{item.description ?? "-"}</Table.Td>
-                <Table.Td>{item.owner ?? "-"}</Table.Td>
-                <Table.Td>{item.createTime}</Table.Td>
-                <Table.Td>{item.priority}</Table.Td>
-                <Table.Td>{item.dueDate ?? "-"}</Table.Td>
-                <Table.Td>
-                  <Link href={"form/" + item.id}>
-                    <Button>View Task</Button>
-                  </Link>
-                </Table.Td>
+        {allTasks?.data ? (
+          <Table withTableBorder>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>ID</Table.Th>
+                <Table.Th>Name</Table.Th>
+                <Table.Th>Description</Table.Th>
+                <Table.Th>Owner</Table.Th>
+                <Table.Th>Created Time</Table.Th>
+                <Table.Th>Priority</Table.Th>
+                <Table.Th>Due Date</Table.Th>
+                <Table.Th></Table.Th>
               </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
+            </Table.Thead>
+            <Table.Tbody>
+              {allTasks?.data.map((item: any) => (
+                <Table.Tr key={item.id}>
+                  <Table.Td>{item.id}</Table.Td>
+                  <Table.Td>{item.name}</Table.Td>
+                  <Table.Td>{item.description ?? "-"}</Table.Td>
+                  <Table.Td>{item.owner ?? "-"}</Table.Td>
+                  <Table.Td>{item.createTime}</Table.Td>
+                  <Table.Td>{item.priority}</Table.Td>
+                  <Table.Td>{item.dueDate ?? "-"}</Table.Td>
+                  <Table.Td>
+                    <Link href={"form/" + item.id}>
+                      <Button>View Task</Button>
+                    </Link>
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        ) : (
+          <Center h={300}>
+            {isFetching && <Loader />}
+            {isError && <Text>Data not found</Text>}
+          </Center>
+        )}
       </AppShell.Main>
     </AppShell>
   );

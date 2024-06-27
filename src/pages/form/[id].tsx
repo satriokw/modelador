@@ -1,4 +1,12 @@
-import { AppShell, Button, Container, Stack, Text } from "@mantine/core";
+import {
+  AppShell,
+  Button,
+  Center,
+  Container,
+  Loader,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Form from "@rjsf/antd";
 import validator from "@rjsf/validator-ajv8";
@@ -79,9 +87,7 @@ export default function FormDetailPage() {
           <Link href="/form">
             <Button mb="xl">{`<- Back`}</Button>
           </Link>
-          {isError && <Text>{error.message}</Text>}
-          {isFetching && <Text>Loading ...</Text>}
-          {form && (
+          {form ? (
             <Form
               schema={schema}
               validator={validator}
@@ -90,6 +96,11 @@ export default function FormDetailPage() {
               onSubmit={log("submitted")}
               onError={log("errors")}
             />
+          ) : (
+            <Center h={300}>
+              {isFetching && <Loader />}
+              {isError && <Text>{error.message}</Text>}
+            </Center>
           )}
         </Container>
       </AppShell.Main>
