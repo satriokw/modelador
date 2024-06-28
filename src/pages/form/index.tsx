@@ -40,6 +40,8 @@ export default function FormIndexPage() {
     },
   });
 
+  const now = new Date();
+
   return (
     <AppShell
       navbar={{
@@ -71,8 +73,8 @@ export default function FormIndexPage() {
           wrap="wrap"
           my={32}
         >
-          <Title order={3}>
-            Task Active (Update Time: 2024-06-18 09:00:00)
+          <Title order={4}>
+            {`Task Active (Update Time: ${now.toLocaleDateString("ja-JP")})`}
           </Title>
         </Flex>
 
